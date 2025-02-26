@@ -1,0 +1,275 @@
+---
+title: "01242025_Lab5"
+name: Celia L Ochoa Medina
+format: pdf
+---
+
+
+```{r}
+x <- 1:10
+add <- function(x,y=0,z=0)
+{x+y+z}
+```
+```{r}
+log(10)
+log(10,base=10)
+```
+
+>What does sample() do?
+
+In R, sample() is a function used to generate random samples from a vector or to create random permutations. Here are its key uses:
+
+```{r}
+sample(1:10, size = 5)
+```
+
+>What if I want 11 things taken from the vector 1 to 10
+
+```{r}
+sample(1:10, size = 11, replace = TRUE)
+
+```
+
+#
+```{r}
+#seq(5,50, by =3) 
+
+#'''
+
+
+#Q. Write a function to generate a random nucleotide sequence of a user specified size/length
+
+```{r}
+x <- c("A", "G", "C", "T")
+sample(x,size = 9, replace = T)
+```
+
+#Generate
+
+
+```{r}
+generate_dna <- function(length=10){
+bases <- c("A", "C", "G", "T")
+ans <- sample(bases,size = length, replace = TRUE)
+return(ans)
+}
+```
+
+
+```{r}
+generate_dna(40)
+```
+>i would like my function to print out a single element vector "GATGATCT". To help with this I can maybe use the 'paste()'
+
+In R, the paste() function is used to concatenate (combine) strings or vectors of strings into a single string. It allows you to join multiple elements together, optionally separating them with a specified delimiter.
+
+
+
+```{r}
+s <-generate_dna(40)
+
+```
+
+```{r}
+
+#paste(generate_dna(), sep = " ", collapse = NULL)
+paste(s, collapse = "")
+```
+
+```{r}
+generate_dna <- function(length=10){
+  #the nucleotides to draw/sample from 
+  bases <- c("A", "C", "G", "T")
+  #draw n = length nucleotides to make our sequence 
+  ans <- sample(bases,size = length, replace = TRUE)
+  #Concatenate/combine/join sequence into one word 
+  ans <-paste(ans, collapse = "")
+return(ans)
+}
+
+```
+```{r}
+s <- generate_dna(length=9)
+print(s)
+```
+I want the ability to switch between these two output formats. I can do this with an extra input argument to my funtion that controls this with TRUE/FALSE
+
+```{r}
+generate_dna <- function(length=10, collapse = FALSE){
+  #the nucleotides to draw/sample from 
+  bases <- c("A", "C", "G", "T")
+  #draw n = length nucleotides to make our sequence 
+  ans <- sample(bases,size = length, replace = TRUE)
+  #Concatenate/combine/join sequence into one word 
+  if (collapse){
+    ans <-paste(ans, collapse = "")
+  }
+  
+return(ans)
+}
+
+s<-generate_dna(length = 9, collapse = TRUE)
+s
+
+```
+
+> Q. Write a funtion that adds the ability to print "sad" or "happy". Control 
+this with a new input paramter called 'mood'
+
+```{r}
+feeling <- function(length=10, feel = FALSE){
+  #the choices to draw/sample from 
+  mood <- c("happy", "sad")
+  #draw n = length of choices to make our sequence 
+  ans <- sample(mood,size = length, replace = TRUE)
+  #Concatenate/combine/join sequence into one word 
+  if (feel){
+    ans <-paste(ans, feel = "")
+  }
+  
+return(ans)
+}
+
+mood_result<-feeling(length = 1, feel = TRUE)
+mood_result
+
+```
+```{r}
+generate_dna <- function(length=10, collapse = FALSE, mood = FALSE){
+  #the nucleotides to draw/sample from 
+  bases <- c("A", "C", "G", "T")
+  #draw n = length nucleotides to make our sequence 
+  ans <- sample(bases,size = length, replace = TRUE)
+  #Concatenate/combine/join sequence into one word 
+  if (collapse){
+    ans <-paste(ans, collapse = "")
+  }
+  if(mood){
+     cat("cheer up!")
+  }
+return(ans)
+}
+
+generate_dna(4, mood = T)
+
+```
+> Q. Write a protein sequence generating function with the ability to output random amino acid sequences of a user defined length 
+# Q. Generate protein sequences from length 6 to 12 amino acids long
+
+```{r}
+protein <- function(length = 10, collapse = TRUE){
+  aa <- c("A", "R", "N", "D", "C", "E", "Q", 
+          "G", "H", "I", "L", "K", "M", "F", 
+          "P", "S", "T", "W", "Y", "V")
+ if(collapse){
+    ans <- paste(ans,collapse = "")
+  
+    return(ans)
+
+ }
+}
+  protein()
+
+
+```
+```{r}
+length<-10
+  ans <- sample(aa,size = length, replace = TRUE)
+
+```
+
+
+#get rid of " "
+ 
+this does not work because my function is not vectorized (in other words,set-up to work on each element of the first input argument 'length') 
+```{r}
+protein(6:12,TRUE)
+
+```
+
+In particular, we can use 'sapply()' to solve this.
+
+>In R, the sapply() function appplies a function to each element of a vector/list and simplifies the output 
+
+```{r}
+my_sequence<- sapply(6:12, protein, collapse = T)
+print(my_sequence)
+
+```
+
+
+> Q. Are any of these sequences unique in the sense that they have never been
+found in nature ?
+
+To make this accessible lets get our sequences in FASTA format:
+> id.6
+GTAGKRLP
+>id.7 
+KRTYGFPT
+
+```{r}
+cat(paste(">id.", 6:12, "\n", my_sequence, "\n", sep = ""), seq ="")
+
+```
+```{r}
+library(bio3d)
+
+my_sequence_vector <-sapply(6:12,protein)
+cat(my_sequence_vector)
+```
+
+```{r}
+
+
+
+library(bio3d)
+s1 <- read.pdb("4AKE") # kinase with drug
+s2 <- read.pdb("1AKE") # kinase no drug
+s3 <- read.pdb("1E4Y") # kinase with drug
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA")
+s3.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s1.b <- s1.chainA$atom$b
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+```
+```{r}
+library(bio3d)
+
+protein_structure <- function(pdb_files, chain="A", elety="CA") {
+# Input validation
+  if (!is.vector(pdb_files) || length(pdb_files) < 1) {
+    stop("vector of PDB file names needed")
+  }
+  
+  # Read and process structures
+  structures <- lapply(pdb_files, function(file) {
+    pdb <- read.pdb(file)
+    chain_data <- trim.pdb(pdb, chain=chain, elety=elety)
+    list(pdb=pdb, chain=chain_data, bfactor=chain_data$atom$b)
+  })
+  
+  # Plot B-factors
+  par(mfrow=c(length(structures), 1))
+  for (i in seq_along(structures)) {
+    plotb3(structures[[i]]$bfactor, 
+           sse=structures[[i]]$chain, 
+           typ="l", 
+           ylab="Bfactor",
+           main=paste("Structure:", pdb_files[i]))
+  }
+    return(structures)
+}
+
+pdb_files <- c("4AKE", "1AKE", "1E4Y")
+results <- protein_structure(pdb_files)
+
+
+```
+
+
+
+
