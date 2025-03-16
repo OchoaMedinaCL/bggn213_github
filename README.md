@@ -5,7 +5,7 @@ Celia L Ochoa Medina
 My classwork from [BGGN213](https://bioboot.github.io/bggn213_W25/) W25 at UC San Diego.
 
 Winter 2025 Class Content: 
-- Class 01: Welcome to Bioinformatics
+- Class 01: [Welcome to Bioinformatics]
 - Class 02: Sequence aliment fundamentals
 - Class 03: Find a gene project
 - Class 04: Advanced sequence alignment and database searching
