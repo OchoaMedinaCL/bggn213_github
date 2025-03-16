@@ -4,8 +4,6 @@ Celia L Ochoa Medina
 
 My classwork from [BGGN213](https://bioboot.github.io/bggn213_W25/) W25 at UC San Diego.
 
-Silly line
-
 Winter 2025 Class Content: 
 - Class 01:
 - Class 02:
@@ -21,9 +19,12 @@ Winter 2025 Class Content:
 - Class 12:
 - Class 13:
 - Class 14:
-- Class 15: 
-
+- Class 15:
+- Class 16:
+- Class 17:
+- Class 18:
+- Class 19:
 
 Link to github: https://github.com/OchoaMedinaCL/bggn213_github/tree/main
 
-I am back
+
