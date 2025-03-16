@@ -11,7 +11,7 @@ Winter 2025 Class Content:
 - Class 04: Advanced sequence alignment and database searching
 - Class 05: Bioinformatics data analysis with R
 - Class 06: [Functions in R](https://github.com/OchoaMedinaCL/bggn213_github/blob/0e1b44e3902f000583eb8e47d5da3cce6f12d946/class-xx/lab6_class_CLOM_2.qmd)
-- Class 07: Data visualization with R 
+- Class 07: Data visualization with R (class_06)
 - Class 08: Unsupervised learning
 - Class 09: Halloween Candy Project
 - Class 10: Structural Bioinformatics
