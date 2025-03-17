@@ -1,0 +1,30 @@
+---
+title: "Class9_RCSB"
+author: "Celia L Ochoa Medina"
+format: pdf
+---
+
+>Q1: What percentage of structures in the PDB are solved by X-Ray and Electron Microscopy.
+
+```{r}
+ 
+PDB_df <- read.csv("/Users/celiaochoamedina/Desktop/Winter_2025/Bioinformatics/Projects/Data Export Summary.csv") 
+
+```
+
+Q2: What proportion of structures in the PDB are protein?
+```{r}
+
+total <- sum(PDB_df$Total)
+cat(total_count)
+```
+
+freq_table <- table(data_df$is_subscriber)
+subscribers_count <- sum(data_df$is_subscriber)
+mean_sub <-mean(data_df$is_subscriber)*100
+cat(mean_sub, "% subscribers")
+```
+
+
+
+Q3: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?

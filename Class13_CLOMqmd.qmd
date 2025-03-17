@@ -1,0 +1,393 @@
+---
+title: "Lab13_RNA Seq Intro"
+Author: "Celia L Ochoa Medina"
+Date: "19 Feb 2025"
+format: html
+---
+
+#browseVignettes("DESeq2")
+
+```{r}
+metadata <- read.csv("airway_metadata.csv")
+counts <- read.csv("airway_scaledcounts.csv", row.names= 1)
+```
+
+Q1. How many genes are in this dataset? 
+```{r}
+nrow(counts)
+```
+
+Q2. How many ‘control’ cell lines do we have? 
+```{r}
+table(metadata$dex)
+
+if(all( colnames(counts) == metadata$id)) {
+  cat("stop!")
+}
+
+```
+Let's find the average gene counts i.e. rows) for control and treated conditions (i.e. columns)
+
+- extract all "control" columns/experiments
+- then find the row wise averagee for these conditions
+
+```{r}
+control.inds <- metadata$dex == "control"
+control.counts <- counts[,control.inds]
+dim(control.counts)
+
+```
+
+```{r}
+head(control.counts)
+control.mean <-rowMeans(control.counts)
+```
+
+>Q4. Follow the same procedure for the treated samples (i.e. calculate the mean per gene across drug treated samples and assign to a labeled vector called treated.mean)
+
+now repeat for treated samples
+
+> Q3. How would you make the above code in either approach more robust? Is there a function that could help here?  
+
+```{r}
+
+treated.mean <- rowMeans( counts[,metadata$dex == "treated"])
+```
+ 
+```{r}
+meancounts <- data.frame(control.mean, treated.mean) 
+head(meancounts)
+```
+>Q5 (a). Create a scatter plot showing the mean of the treated samples against the mean of the control samples. Your plot should look something like the following.
+
+```{r}
+plot(meancounts)
+```
+ 
+ > Q5 (b).You could also use the ggplot2 package to make this figure producing the plot below. What geom_?() function would you use for this plot?
+ 
+```{r}
+library(ggplot2)
+ggplot(meancounts)+
+  aes(control.mean,treated.mean)+
+  geom_point(alpha = 0.3)
+```
+ 
+> Q6. Try plotting both axes on a log scale. What is the argument to plot() that allows you to do this?
+ 
+```{r}
+plot(meancounts, log = "xy")
+```
+ 
+ ## log fold change
+ 
+ We often work with log2 units - why?
+ -> because the interpretation is much more straightforward.
+ 
+```{r}
+log2(20/20)
+```
+```{r}
+log2(40/20)
+```
+calculate log2 fold change ('log2fc') of treated/control
+
+```{r}
+meancounts$log2fc <- log2( meancounts$treated.mean / control.mean)
+head(meancounts)
+```
+ 
+There are some weird numbers in the logic2fc values like -Inf and NaN all bc I have zero count genes. I need to filter these out (i.e. remove them) before going any further.
+ 
+```{r}
+#looks at first two columns where value is = 0 (this will give T/F), use rowSums to convert to an integer
+to.keep <- rowSums(meancounts[,1:2]==0) == 0
+# [row, columns]
+mycounts <- meancounts[to.keep,]
+
+```
+Q. how many non-zero count genes do we have left?
+
+```{r}
+non_zero <- nrow(mycounts)
+```
+> Q8. Using the up.ind vector above can you determine how many up regulated genes we have at the greater than 2 fc level? 
+
+> Q9. Using the down.ind vector above can you determine how many down regulated genes we have at the greater than 2 fc level? 
+
+```{r}
+library(DESeq2)
+up.ind <- mycounts$log2fc > 2
+down.ind <- mycounts$log2fc < (-2)
+
+up_regulated <- count(up.ind)
+down_regulated <- count(down.ind)
+cat("up_regulated gened =", up_regulated, ".\n")
+cat("down_regulated gened =", down_regulated)
+
+
+```
+
+> Q10. Do you trust these results? Why or why not?
+>> no because we dont know of the differences are significant
+
+
+Like most bioConductor packages DESeq wants its input in a very particular format. 
+
+```{r}
+#/ message: false
+library(DESeq2)
+
+dds <- DESeqDataSetFromMatrix(countData = counts, 
+                       colData = metadata,
+                       design = ~dex)
+
+```
+
+```{r}
+dds <- DESeq(dds)
+```
+```{r}
+res <- results(dds)
+head(res)
+```
+### Save our results as CSV file
+Save our results to CSV file:
+```{r}
+write.csv(res, file = "myresults.csv")
+```
+### Volcano Plot
+
+Let's make a common summary plot of our results:
+Our main results here are the log2 fold and adjusted P-values
+```{r}
+plot(res$log2FoldChange, res$padj, col = "seagreen2")
+
+
+
+```
+We need to transform the P-value axis here so we can see the data we actually care about (small p-values)
+```{r}
+plot( res$log2FoldChange, log(res$padj))
+```
+To make folks happy, we need to flip the y-axis. So the most important/significant values are on the top.
+
+This is our "standard" volcano plot
+```{r}
+plot( res$log2FoldChange, -log(res$padj), col = "magenta3")
+
+```
+
+
+Let's make this nicer in ggplot. 
+
+We can use color to highlight the most important subset of transc
+
+```{r}
+mycols <- rep("skyblue3", nrow(res))
+mycols[ res$log2FoldChange >= 2] <- "red3"
+mycols[ res$log2FoldChange <= -2] <- "red3"
+mycols[res$padj > 0.005] <- "skyblue3"
+```
+
+```{r}
+ggplot(res)+
+  aes(log2FoldChange,-log2(padj)) +
+  geom_point(col = mycols) +
+  labs(title = "Summary volcano plot") +
+  xlab("log2 fold-change") +
+  ylab("log2 adjusted p-value") +
+  geom_vline(xintercept = c(-2,2), col = "midnightblue", lyt =2)
+  geom_hline(yintercept = -log(0.05), col = "blue", lyt = 2)
+  theme_minimal()
+
+```
+
+
+```{r}
+head( rownames(res))
+```
+We can use a set of bioconductor packages
+
+```{r}
+
+# in consule type:  
+#in BiocManager::install(c("AnnotationDbi"))
+#in BiocManager::install(c("org.Hs.eg.db"))
+
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+```
+The different formats that I can convert IDs between include:
+
+
+```{r}
+columns(org.Hs.eg.db)
+```
+We can use the 'mapsIds()' function to do this "mapping/conversion":
+```{r}
+res$symbol <- mapIds(org.Hs.eg.db, 
+                     keys = row.names(res),
+                     keytype = "ENSEMBL",
+                     column =  "SYMBOL",
+                     multiVals = "first")
+
+```
+
+ 
+```{r}
+res$genename <- mapIds(org.Hs.eg.db, 
+                     keys = row.names(res),
+                     keytype = "ENSEMBL",
+                     column =  "GENENAME",
+                     multiVals = "first")
+head(res)
+```
+ 
+```{r}
+res$entrez <- mapIds(org.Hs.eg.db, 
+                     keys = row.names(res),
+                     keytype = "ENSEMBL",
+                     column =  "ENTREZID",
+                     multiVals = "first")
+
+head(res)
+```
+ 
+
+ 
+```{r}
+write.csv(res, file = "myresults_annotated.csv")
+```
+
+## Pathway Analysis
+Let's use KEGG to see which pathways my gene overlaps with. i.e. highlight the biology that may be influenced by the dex drug treatment.
+
+We will usew the following packages: 'BiocManager::install(c("pathview,"gage","gageData"))
+
+```{r}
+library(pathview)
+library(gage)
+library(gageData)
+```
+
+```{r}
+
+data(kegg.sets.hs)
+
+# Examine the first 2 pathways in this kegg set for humans
+head(kegg.sets.hs, 2)
+```
+ 
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+```{r}
+# Get the results
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+```
+```{r}
+attributes(keggres)
+```
+```{r}
+# Look at the first three down (less) pathways
+head(keggres$less, 3)
+```
+
+
+
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+```
+ 
+```{r}
+
+# A different PDF based output of the same data
+pathview(gene.data=foldchanges, pathway.id="hsa04110", kegg.native=FALSE)
+
+```
+```{r}
+i <- grep("CRISPLD2", res$symbol)
+res[i,]
+```
+```{r}
+rownames(res[i,])
+```
+ 
+```{r}
+plotCounts(dds, gene="ENSG00000103196", intgroup="dex")
+
+```
+```{r}
+# Return the data
+d <- plotCounts(dds, gene="ENSG00000103196", intgroup="dex", returnData=TRUE)
+head(d)
+```
+```{r}
+boxplot(count ~ dex , data=d)
+library(ggplot2)
+ggplot(d, aes(dex, count, fill=dex)) + 
+  geom_boxplot() + 
+  scale_y_log10() + 
+  ggtitle("CRISPLD2")
+```
+ 
+```{r}
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+# Focus on signaling and metabolic pathways only
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+
+# Examine the first 3 pathways
+head(kegg.sets.hs, 3)
+```
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+ # Get the results
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+
+```
+
+
+```{r}
+attributes(keggres)
+
+```
+```{r}
+# Look at the first few down (less) pathways
+head(keggres$less)
+```
+ 
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+
+```
+ 
+```{r}
+# A different PDF based output of the same data
+pathview(gene.data=foldchanges, pathway.id="hsa04110", kegg.native=FALSE)
+```
+```{r}
+## Focus on top 5 upregulated pathways here for demo purposes only
+keggrespathways <- rownames(keggres$greater)[1:5]
+
+# Extract the 8 character long IDs part of each string
+keggresids = substr(keggrespathways, start=1, stop=8)
+keggresids
+```
+```{r}
+pathview(gene.data=foldchanges, pathway.id=keggresids, species="hsa")
+```
+ 
+ 
