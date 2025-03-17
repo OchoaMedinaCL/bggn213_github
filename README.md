@@ -25,7 +25,7 @@ Using R and Other Tools for Bioinformatics Analysis
 - Class 12: [AlphaFold and Structural Predictions](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/lab10_AF2.qmd)
 - Class 13: [Transcriptomics, RNAseq, and gene list interpretation](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Class13_CLOMqmd.qmd)
 - Class 14: [RNA-Seq](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/lab14_CLOM.qmd)
-- Class 18: [Pertussus resurgence](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab19_CLOM.qmd)
+- Class 18: [Pertussis resurgence](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab19_CLOM.qmd)
 - Class 19: [Cancer Mutation Analysis](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab19_CLOM.qmd)
 
 Link to github: https://github.com/OchoaMedinaCL/bggn213_github/tree/main
