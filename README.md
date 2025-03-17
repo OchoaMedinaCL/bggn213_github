@@ -2,6 +2,8 @@
  
 2025 Bioinformatics Class Portfolio 
 
+This is a store of my class-work for [BNGG213]
+
 Celia L Ochoa Medina
 
 My classwork from [BGGN213](https://bioboot.github.io/bggn213_W25/) W25 at UC San Diego.
