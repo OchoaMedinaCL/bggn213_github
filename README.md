@@ -18,7 +18,7 @@ Winter 2025 Class Content:
 - Class 09: Halloween Candy Project
 - Class 10: [Structural Bioinformatics](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Class10_pt2_CLOM.qmd)
 - Class 11: [Genome informatics](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/CLOM_Q13_Q14.qmd)
-- Class 12: AlphaFold and Structural Predictions
+- Class 12: [AlphaFold and Structural Predictions](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/lab10_AF2.qmd)
 - Class 13: [Transcriptomics, RNAseq, and gene list interpretation](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Class13_CLOMqmd.qmd)
 - Class 14: [RNA-Seq](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/lab14_CLOM.qmd)
 - Class 15: Git and Github
