@@ -2,7 +2,7 @@
  
 2025 Bioinformatics Class Portfolio 
 
-This is a store of my class-work for [BNGG213](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/_config.yml)
+This is a store of my class-work for [BNGG213]
 
 Celia L Ochoa Medina
 
