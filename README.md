@@ -17,7 +17,7 @@ Winter 2025 Class Content:
 - Class 08: Unsupervised learning
 - Class 09: Halloween Candy Project
 - Class 10: Structural Bioinformatics
-- Class 11: Genome informatics
+- Class 11: [Genome informatics](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/CLOM_Q13_Q14.qmd)
 - Class 12: AlphaFold and Structural Predictions
 - Class 13: Transcriptomics, RNAseq, and gene list interpretation
 - Class 14: RNA-Seq
