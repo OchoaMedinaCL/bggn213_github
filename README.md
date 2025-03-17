@@ -24,7 +24,7 @@ Winter 2025 Class Content:
 - Class 15: Git and Github
 - Class 16: UNIX Essentials for bioinformatics
 - Class 17: Analyzing sequencing data in the cloud
-- Class 18: Pertussus resurgence 
+- Class 18: [Pertussus resurgence](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab19_CLOM.qmd)
 - Class 19: Cancer Mutation Analysis
 
 Link to github: https://github.com/OchoaMedinaCL/bggn213_github/tree/main
