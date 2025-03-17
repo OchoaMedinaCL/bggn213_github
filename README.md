@@ -30,4 +30,4 @@ Using R and Other Tools for Bioinformatics Analysis
 
 Link to github: https://github.com/OchoaMedinaCL/bggn213_github/tree/main
 
-
+theme: jekyll-theme-minimal
