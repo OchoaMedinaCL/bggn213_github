@@ -18,16 +18,13 @@ Introductory Materials: Working with R
 
 Using R and Other Tools for Bioinformatics Analysis
  
-- Class 08: Unsupervised learning
-- Class 09: Halloween Candy Project
+- Class 08: [Unsupervised learning](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab8_CLOM.qmd)
+- Class 09: [Halloween Candy Project](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Class10_pt2_CLOM.qmd)
 - Class 10: [Structural Bioinformatics](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Class10_pt2_CLOM.qmd)
 - Class 11: [Genome informatics](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/CLOM_Q13_Q14.qmd)
 - Class 12: [AlphaFold and Structural Predictions](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/lab10_AF2.qmd)
 - Class 13: [Transcriptomics, RNAseq, and gene list interpretation](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Class13_CLOMqmd.qmd)
 - Class 14: [RNA-Seq](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/lab14_CLOM.qmd)
-- Class 15: Git and Github
-- Class 16: UNIX Essentials for bioinformatics
-- Class 17: Analyzing sequencing data in the cloud
 - Class 18: [Pertussus resurgence](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab19_CLOM.qmd)
 - Class 19: [Cancer Mutation Analysis](https://github.com/OchoaMedinaCL/bggn213_github/blob/main/Lab19_CLOM.qmd)
 
