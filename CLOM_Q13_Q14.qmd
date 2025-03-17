@@ -1,0 +1,45 @@
+---
+title: "lab10_galaxy_CLOM"
+author: "Celia L Ochoa Medina"
+format: pdf
+---
+
+```{r}
+library(BiocGenerics)
+```
+> Q13. Read this file into R and determine the sample size for each genotype and their corresponding median expression levels for each of these genotypes
+
+```{r}
+rs_file <- read.table("~/Desktop/Winter_2025/Bioinformatics/Lab/Genome/rs8067378_ENSG00000172057.6.txt")
+
+#sample size for each genotype
+sample_size <- table(rs_file$geno)
+
+median_expression <- aggregate(exp ~ geno, data = rs_file, median)
+
+summary(rs_file)
+
+print(sample_size)
+print(median_expression)
+```
+
+
+>Q14. Q14: Generate a boxplot with a box per genotype, what could you infer from the relative expression value between A/A and G/G displayed in this plot? Does the SNP effect the expression of ORMDL3? 
+
+```{r}
+
+# boxplot 
+boxplot_rs <- boxplot(exp ~ geno, data = rs_file, main = "Expression Levels by Genotype",
+         xlab = "Genotype", ylab = "Expression", 
+         col = c("lightblue", "aquamarine", "lavenderblush"))
+
+stripchart(exp ~ geno, data = rs_file, vertical = TRUE, method = "jitter", 
+           pch = 20, col = "black", add = TRUE)
+
+# Extract median values from the boxplot object
+cat("median values:", boxplot_rs$stats[3, ],"\n")
+cat("Answer: For A/A median value is higher (31.25) than G/G (20.07) which could mean that SNP effect leads to increased gene expression. G/G median comparatively is a lot lower suggesting downregulation of OMRDL3 for individuals expressing this genotype. Ultimately, this suggests that SNP does affect ORMDL3 expression.\n
+")
+```
+
+

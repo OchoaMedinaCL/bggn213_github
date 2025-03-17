@@ -1,0 +1,46 @@
+---
+title: "Lab19_CLOM"
+author: "Celia L Ochoa Medina"
+PID: A69028477
+format: html
+---
+
+```{r}
+PID_A69028477_mutant <- file("mutant_tumor.txt")
+PID_A69028477_WT <- file("wt_healthy.txt")
+```
+
+```{r}
+library(bio3d)
+file_import <- "A69028477_mutant_seq.fa"
+#file_import <- "A69038039_mutant_seq.fa"
+
+PID_A69028477 <- read.fasta("A69028477_mutant_seq.fa")
+s <- read.fasta(file_import)
+
+```
+
+We could use '==' or '!=' or conserv() 
+```{r}
+s$ali
+
+```
+
+```{r}
+score <- conserv(s)
+```
+
+Can we find the elements where 'score' is not equal to 1
+
+Can we format in conventional way (e.g, "LPSP") with the paste() function
+```{r}
+inds <- score != 1
+positions <- which(score != 1)
+WT_positions <- s$ali[1,positions]
+mutant_positions <- s$ali[2,positions]
+
+paste(WT_positions,positions,mutant_positions, sep = "")
+```
+
+
+

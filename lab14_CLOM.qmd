@@ -1,0 +1,312 @@
+---
+title: "Lab14_CLOM"
+author: "Celia L Ochoa Medina"
+format: pdf
+---
+
+```{r}
+library(tidyverse)
+
+countData <- read.csv("GSE37704_featurecounts.csv", row.names = 1)
+head(countData)
+
+
+metadata <- read.csv("GSE37704_metadata.csv")
+head(metadata)
+
+  
+```
+
+```{r}
+# Note we need to remove the odd first $length col
+newcounts<- as.matrix(countData[,-1])
+head(newcounts)
+dim(newcounts)
+```
+
+Remove zero counts
+```{r}
+filtering_counts <- newcounts[rowSums(newcounts != 0) > 0, colSums(newcounts != 0) > 0]
+dim(filtering_counts)
+
+filtered_counts <- as.matrix(filtering_counts)
+
+# Assign gene IDs as row names
+rownames(countData) <- countData$GeneID  # Ensure 'GeneID' column exists
+countData$GeneID <- NULL  # Remove the redundant column if needed
+
+head(filtered_counts)
+dim(filtered_counts)
+```
+
+```{r}
+colnames(filtered_counts)
+```
+
+
+
+```{r}
+library(DESeq2)
+
+dds = DESeqDataSetFromMatrix(countData= filtered_counts,
+                             colData= metadata,
+                             design=~condition)
+dds = DESeq(dds)
+```
+
+```{r}
+dds
+```
+
+```{r}
+res <- results(dds)
+summary(res)
+```
+
+
+
+```{r}
+pc <- prcomp(t(filtered_counts), scale = T)
+```
+
+
+```{r}
+summary(pc)
+```
+```{r}
+metadata$condition
+mycols <- c(rep("blue",3), rep("red",3))
+mycols
+```
+
+
+```{r}
+library(ggplot2)
+
+ggplot(pc$x) +
+  aes(PC1,PC2) +
+  geom_point(col = "blue")
+
+```
+
+>Q. How many genes fo we have left after filtering?
+
+```{r}
+dim(dds)
+```
+# DESeq analysis
+```{r}
+library(DESeq2)
+```
+## setup the DESeq analysis input object
+```{r}
+
+dds <- DESeq(dds)
+```
+```{r}
+res = results(dds)
+
+```
+
+
+```{r}
+plot( res$log2FoldChange, -log(res$padj) )
+abline(h = -log(0.005), col = "red")
+abline(v = c(-2, 2), col = "red")
+```
+
+Q. Improve this plot by completing the below code, which adds color and axis labels
+
+```{r}
+
+
+# Make a color vector for all genes
+mycols <- rep("gray", nrow(res) )
+
+# Color red the genes with absolute fold change above 2
+mycols[ abs(res$log2FoldChange) > 2 ] <- "red"
+
+# Color blue those with adjusted p-value less than 0.01
+#  and absolute fold change more than 2
+inds <- (0.01) & (abs(res$log2FoldChange) > 2 )
+mycols[ inds ] <- "blue"
+
+plot( res$log2FoldChange, -log(res$padj), col= mycols, xlab="Log2(FoldChange)", ylab="-Log(P-value)" )
+```
+
+
+
+```{r}
+library(pathview)
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+# Focus on signaling and metabolic pathways only
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+
+# Examine the first 3 pathways
+head(kegg.sets.hs, 3)
+
+```
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+```
+The different formats that I can convert IDs between include:
+
+
+```{r}
+columns(org.Hs.eg.db)
+```
+
+We can use the 'mapsIds()' function to do this "mapping/conversion":
+
+```{r}
+columns(org.Hs.eg.db)
+res$symbol <- mapIds(org.Hs.eg.db, 
+                     keys = row.names(res),
+                     keytype = "ENSEMBL",
+                     column =  "SYMBOL",
+                     multiVals = "first")
+
+
+res$genename <- mapIds(org.Hs.eg.db, 
+                     keys = row.names(res),
+                     keytype = "ENSEMBL",
+                     column =  "GENENAME",
+                     multiVals = "first")
+
+res$entrez <- mapIds(org.Hs.eg.db, 
+                     keys = row.names(res),
+                     keytype = "ENSEMBL",
+                     column =  "ENTREZID",
+                     multiVals = "first")
+
+head(res,10)
+```
+
+Q. Finally for this section let's reorder these results by adjusted p-value and save them to a CSV file in your current project directory.
+
+```{r}
+res = res[order(res$pvalue),]
+write.csv(res, file ="deseq_results.csv")
+```
+
+
+## Pathway Analysis
+```{r}
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+# Focus on signaling and metabolic pathways only
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+
+# Examine the first 3 pathways
+head(kegg.sets.hs, 3)
+```
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+ # Get the results
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+
+```
+
+
+```{r}
+attributes(keggres)
+
+```
+```{r}
+# Look at the first few down (less) pathways
+head(keggres$less)
+```
+ 
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+
+```
+ 
+```{r}
+# A different PDF based output of the same data
+pathview(gene.data=foldchanges, pathway.id="hsa04110", kegg.native=FALSE)
+```
+```{r}
+## Focus on top 5 upregulated pathways here for demo purposes only
+keggrespathways <- rownames(keggres$greater)[1:5]
+
+# Extract the 8 character long IDs part of each string
+keggresids = substr(keggrespathways, start=1, stop=8)
+keggresids
+```
+```{r}
+pathview(gene.data=foldchanges, pathway.id=keggresids, species="hsa")
+```
+
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+
+
+# Focus on Biological Process subset of GO
+gobpsets = go.sets.hs[go.subs.hs$BP]
+
+gobpres = gage(foldchanges, gsets=gobpsets, same.dir=TRUE)
+
+lapply(gobpres, head)
+
+```
+
+```{r}
+head(gobpres$less)
+```
+
+##Reactome
+We can use the reactome via R or via their fancy new website interferance. The web interferance wants a set of ENTREZ ID values for your genes of interest. Let's generate that.
+
+
+
+```{r}
+inds <- abs(res$log2FoldChange) >=2  & res$padj <= 0.05 #will give T/F values if greater or less than 2
+
+top_genes <- res$entrez[inds]
+
+print(paste("Total number of top genes:", length(top_genes)))
+```
+```{r}
+write.table(top_genes, file="top_genes.txt", row.names=FALSE, col.names=FALSE, quote=FALSE)
+
+```
+
+
+#Include images of pathwview results
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics("hsa04330.pathview.png")
+knitr::include_graphics("hsa04142.pathview.png")
+knitr::include_graphics("hsa00140.pathview.png")
+knitr::include_graphics("hsa04630.pathview.png")
+knitr::include_graphics("hsa04640.pathview.png")
+knitr::include_graphics("hsa00500.pathview.png")
+knitr::include_graphics("hsa00330.pathview.png")
+
+
+```
+
+
+
+

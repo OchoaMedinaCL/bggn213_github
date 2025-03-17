@@ -1,0 +1,112 @@
+---
+title: "14Feb2025_bioinformatics_CLOM"
+author: "Celia L Ochoa Medina"
+format: pdf
+---
+```{r}
+library("bio3d")
+# Search for available functions in the loaded package
+#ls("package:bio3d")
+
+```
+```{r}
+id <- "1ake_A"
+
+aa <- get.seq(id)
+```
+```{r}
+blast <- blast.pdb(aa)
+```
+> plot an overview of my search results
+
+```{r}
+hits <-plot(blast)
+```
+
+>let's see the "top hits"
+
+```{r}
+hits$pdb.id
+
+```
+> We can download all these PDBs  to the 'paths = "pdbs"' folder with the 'get.pdb()' function:
+
+```{r}
+files <- get.pdb(hits$pdb, path = "pdbs", split = TRUE, gzip = TRUE)
+```
+```{r}
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+##conventional analysis
+```{r}
+rd <- rmsd(pdbs)
+```
+
+### heat-map
+```{r}
+library(pheatmap)
+pheatmap(rd)
+```
+
+
+```{r}
+library(httr)
+
+url <- "https://tinyyurl.com/newviewngl"
+response <- GET(url)
+source(url)
+# Check the status code (200 means success)
+status_code(response)
+
+# View the content of the webpage
+content(response, "text")
+
+library(NGLVieweR)
+
+```
+
+
+```{r}
+view.pdbs(pdbs)
+```
+
+> We can 
+
+```{r}
+km <- kmeans(rd, centers = 2)
+km$cluster
+mycols <- c("red", "blue")[km$cluster]
+
+```
+
+```{r}
+view.pdbs(pdbs, color = mycols)
+```
+
+```{r}
+pc <- pca(pdbs)
+plot(pc, col = mycols)
+```
+
+>
+
+```{r}
+
+mktrj(pc,file = "pca.pdb")
+```
+
+```{r}
+p <- read.pdb("pca.pdb", multi = T)
+view.pdb(p)
+```
+
+```{r}
+ref <- read.pdb("1ake")
+view.pdb(ref)
+```
+
+
+
+
+
