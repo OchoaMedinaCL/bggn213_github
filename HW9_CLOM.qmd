@@ -1,0 +1,82 @@
+---
+title: "HW9_MGT3_CLOM"
+author: "Celia L Ochoa Medina"
+format: pdf
+---
+
+Craft Studio Furnishings (CSF) produces a unique line of cane furniture. The items currently on the market are table
+chairs, easy chairs, and love seats. The studio is considering introducing two new items: coffee tables and end tables.
+Management at CSF is seeking to optimize the daily production plan by means of a linear optimization model. The production of any item consists of three stages: manufacturing a wooden frame, stretching woven cane onto the frame, and finishing (e.g., painting, polishing). Each procedure is performed by a different shop within the studio. The labor hours required for each product are shown in the table below, along with the total number of daily labor hours available in each shop and the estimated net profit per item. In addition to the constraints mentioned above, CSF also wishes to limit the production of their new products until sufficient demand for these products is established. For the time being, they would like to produce no more than 10 coffee tables per day and no more than 10 end tables per day.
+Table Chair Easy Chair Love Seat Coffee Table End Table Availability
+(hours)
+Frame manufacturing (hours) 1 1 1.3 0.5 0.5 40
+Stretching (hours) 1 1.2 1.5 2 1.5 80
+Finishing (hours) 1 1.5 1.7 1 1 60
+Profit ($/unit) 30 44 57 55 4
+```{r}
+
+library(lpSolve)
+library(lpSolveAPI)
+
+frame <- c(1,1,1,3,0.5,0.5,40)
+sketch <- c(1, 1.2, 1.5, 2, 1.5, 80)
+Finishing <- c(1, 1.5, 1.7, 1, 1, 60)
+Profit <- c(30, 44, 57, 55, 4)
+
+
+```
+```{r}
+m <- make.lp(nrow =0, ncol =5)
+set.objfn(lprec = m, obj = c(30,44,57,55,45))
+```
+```{r}
+lp.control(lprec = m, sense = "max")
+
+```
+Add constraints
+```{r}
+add.constraint(lprec =m, 
+               xt = c(1,1,1.3,0.5,0.5),
+               type = "<=",
+               rhs = 40)
+print(m)
+```
+```{r}
+add.constraint(lprec =m, 
+               xt = c(1, 1.2, 1.5, 2, 1.5),
+               type = "<=",
+               rhs = 80)
+print(m)
+```
+Finishing
+```{r}
+add.constraint(lprec =m, 
+               xt = c(1, 1.5, 1.7, 1, 1),
+               type = "<=",
+               rhs = 60)
+print(m)
+```
+```{r}
+
+print(m)
+
+#Solves for the optimal solution. If R returns the code 0, this means an optimal exists and has been found.
+solve(m)
+
+#Returns the optimal values of the decision variables. R will print these values in the same order in which the decision variables were ordered in the objective function.
+get.variables(m)
+
+#Returns the optimized value of the objective function.
+get.objective(m)
+```
+```{r}
+#returns the objective coefficient range.
+get.sensitivity.obj(m)
+
+```
+
+
+```{r}
+get.sensitivity.rhs(m) #returns the shadow prices for each constraint.
+```
+
